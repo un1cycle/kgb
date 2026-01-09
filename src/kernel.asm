@@ -79,6 +79,6 @@ CODE_SEL equ 0x08
 DATA_SEL equ 0x10
 
 section .text
-extern 3d_begin
-jmp 3d_begin
-hlt
+jmp 0x8200
+
+times 1024-($-$$) db 0
