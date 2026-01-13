@@ -27,7 +27,8 @@ int bash(char* command) {
   return system(command_to_run);
 }
 
-void cleanup() {
+void cleanup(char* error_code) {
+  printf("%s\n", error_code);
   remove("kernel.asm.cat");
   remove("kernel.bin.cat");
   remove("boot.bin");
@@ -37,14 +38,14 @@ int main(int argc, char **argv) {
   int filename_index = 0;
   int size_index = 0;
   if (bash("cat src/kernel.asm src/*[^kernel][^boot].asm > kernel.asm.cat")) {
-    cleanup();
+    cleanup("failed to cat");
     return EXIT_FAILURE;
   }
 
   for (int i = 1; i < argc; ++i) {
     if (strcmp(argv[i], "-o") == 0) {
-      if (argc > i){
-        cleanup();
+      if (argc <= i){
+        cleanup("didn't find -o argument");
         return EXIT_FAILURE;
       }
       
@@ -54,15 +55,15 @@ int main(int argc, char **argv) {
     }
 
     if (strcmp(argv[i], "-s") == 0) {
-      if (argc > i) {
-        cleanup();
+      if (argc <= i) {
+        cleanup("didn't find -s argument");
         return EXIT_FAILURE;
       }
       
       i++;
       size_index = i;
-      if (filename_index > 0) {
-        cleanup();
+      if (filename_index <= 0) {
+        cleanup("didn't find filename");
         return EXIT_FAILURE;
       }
 
@@ -71,7 +72,7 @@ int main(int argc, char **argv) {
               argv[filename_index], stoi(argv[size_index]));
 
       if (bash(command) != 0) {
-        cleanup();
+        cleanup("couldn't init binary");
         return EXIT_FAILURE;
       }
 
@@ -79,32 +80,33 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (size_index > 0) {
-    cleanup();
+  if (size_index <= 0) {
+    cleanup("couldn't find size");
     return EXIT_FAILURE;
   }
   
   if (bash("nasm -f bin src/boot.asm -o boot.bin") != 0) {
-    cleanup();
+    cleanup("couldn't assemble src/boot.asm");
     return EXIT_FAILURE;
   }
   
   if (bash("nasm -f bin kernel.asm.cat -o kernel.bin.cat") != 0) {
-    cleanup();
+    cleanup("couldn't assemble kernel");
     return EXIT_FAILURE;
   }
   char command[200];
   sprintf(command, "dd if=boot.bin of=%s bs=512 seek=0 conv=notrunc", argv[filename_index]);
   if (bash(command) != 0) {
-    cleanup();
+    cleanup("couldn't set bootloader");
     return EXIT_FAILURE;
   }
   
   sprintf(command, "dd if=kernel.bin.cat of=%s bs=512 seek=1 conv=notrunc", argv[filename_index]);
   if (bash(command) != 0) {
-    cleanup();
+    cleanup("couldn't set kernel");
     return EXIT_FAILURE;
   }
   
-  cleanup();
+  cleanup("success!");
+  return EXIT_SUCCESS;
 }
