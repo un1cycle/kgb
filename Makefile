@@ -3,7 +3,7 @@ ENDC = build/build.bin
 COMPC = gcc
 
 END = build/kgb.iso
-COMP = ENDC
+COMP = $(ENDC)
 SIZE = 5000
 
 all: $(END)
