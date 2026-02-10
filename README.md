@@ -1,2 +1,1 @@
-# kgb
-kernel game builder
+# unfinished (just started a few days ago :P)
