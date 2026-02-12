@@ -1,3 +1,5 @@
+rm engine86.iso
+
 nasm -f bin src/boot.asm -o boot.bin
 nasm -f bin src/kernel.asm -o kernel.bin
 
