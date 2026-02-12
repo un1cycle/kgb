@@ -56,7 +56,7 @@ ap_mcs:
     cli
     xor ax, ax
     mov ds, ax
-    lgdt [gdt_desc - kernel_init + 0x7e00] 
+    lgdt [gdt_desc] 
     mov eax, cr0
     or eax, 1
     mov cr0, eax
