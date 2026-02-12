@@ -84,21 +84,21 @@ parallel:
     mov ebx, [eax]
     shr ebx, 24
 
-mov edi, [lfb_addr]
-mov edx, ebx
-imul ebx, 6
-add edi, ebx
-mov edx, 1024 * 3 * 100
-add edi, edx
-mov ebx, edx
+    mov edi, [lfb_addr]
+    mov edx, ebx
+    imul ebx, 6
+    add edi, ebx
+    mov edx, 1024 * 3 * 100
+    add edi, edx
+    mov ebx, edx
 
-mov byte [edi], 0x00
-mov byte [edi + 1], 0x00
-mov byte [edi + 2], 0xFF
-add edi, 3
-mov byte [edi], 0x00
-mov byte [edi + 1], 0x00
-mov byte [edi + 2], 0xFF
+    mov byte [edi], 0x00
+    mov byte [edi + 1], 0x00
+    mov byte [edi + 2], 0xFF
+    add edi, 3
+    mov byte [edi], 0x00
+    mov byte [edi + 1], 0x00
+    mov byte [edi + 2], 0xFF
 
     cli
     hlt
